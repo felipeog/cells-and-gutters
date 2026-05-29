@@ -23,8 +23,7 @@ const SVG_SIZE = CELL_AMOUNT * CELL_SIZE + GUTTER_AMOUNT * GUTTER_SIZE;
 const SEED = "cells-and-gutters-000";
 const NOISE_STEP = 0.3;
 
-// const DEBUG = false;
-const DEBUG = true;
+const DEBUG = false;
 const DEBUG_MARGIN = CELL_SIZE + GUTTER_SIZE;
 
 // =============================================================================
@@ -98,9 +97,7 @@ for (let row = 0; row < MATRIX_LENGTH; row++) {
   yOffset += NOISE_STEP;
 }
 
-// ========== remove tight gutters
 let count = Infinity;
-// let count = -1;
 
 while (count > 0) {
   count = 0;
@@ -132,22 +129,6 @@ while (count > 0) {
     }
   }
 }
-
-// matrix = [
-//   [null, true, null, true, null, true, null, true, null, true, null],
-//   [false, null, true, null, true, null, true, null, true, null, false],
-//   [null, false, null, true, null, true, null, true, null, false, null],
-//   [true, null, true, null, true, null, true, null, true, null, true],
-//   [null, false, null, true, null, true, null, true, null, false, null],
-//   [true, null, false, null, true, null, true, null, true, null, false],
-//   [null, true, null, false, null, true, null, true, null, true, null],
-//   [true, null, false, null, false, null, false, null, true, null, false],
-//   [null, false, null, false, null, true, null, false, null, false, null],
-//   [false, null, true, null, false, null, true, null, false, null, false],
-//   [null, true, null, true, null, false, null, true, null, false, null]
-// ];
-
-// console.log(matrix);
 
 if (DEBUG) {
   let gridD = "";
@@ -257,7 +238,6 @@ for (let row = cellStart; row < cellEnd; row++) {
 
     const rowIndex = row / 2;
     const colIndex = col / 2;
-
     const rowOffset = rowIndex * CELL_SIZE + rowIndex * GUTTER_SIZE;
     const colOffset = colIndex * CELL_SIZE + colIndex * GUTTER_SIZE;
 
@@ -284,30 +264,22 @@ for (let row = cellStart; row < cellEnd; row++) {
 
     if (!top && !right) {
       d += `M ${colOffset + CELL_RADIUS} ${rowOffset} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_SIZE} ${
-        rowOffset + CELL_RADIUS
-      } `;
+      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_SIZE} ${rowOffset + CELL_RADIUS} `;
     }
 
     if (!right && !bottom) {
       d += `M ${colOffset + CELL_SIZE} ${rowOffset + CELL_RADIUS} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${
-        rowOffset + CELL_SIZE
-      } `;
+      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset + CELL_SIZE} `;
     }
 
     if (!bottom && !left) {
       d += `M ${colOffset + CELL_RADIUS} ${rowOffset + CELL_SIZE} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset} ${
-        rowOffset + CELL_RADIUS
-      } `;
+      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset} ${rowOffset + CELL_RADIUS} `;
     }
 
     if (!left && !top) {
       d += `M ${colOffset} ${rowOffset + CELL_RADIUS} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${
-        colOffset + CELL_RADIUS
-      } ${rowOffset} `;
+      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset} `;
     }
 
     const path = createSvgElement("path", {
@@ -379,26 +351,18 @@ for (let row = gutterStart; row < gutterEnd; row++) {
       }
 
       if (!right) {
-        d += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${
-          rowOffset + GUTTER_SIZE
-        } `;
-        d += `A ${r} ${r} 0 0 1 ${
-          colOffset + GUTTER_SIZE + CELL_SIZE / 2
-        } ${rowOffset} `;
+        d += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
       }
 
       if (!bottom) {
         d += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${
-          rowOffset + GUTTER_SIZE + CELL_SIZE / 2
-        } `;
+        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
       }
 
       if (!left) {
         d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset - CELL_SIZE / 2} ${
-          rowOffset + GUTTER_SIZE
-        } `;
+        d += `A ${r} ${r} 0 0 1 ${colOffset - CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
       }
 
       const path = createSvgElement("path", {
@@ -424,30 +388,22 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
       if (top && right) {
         d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${
-          rowOffset + GUTTER_SIZE + CELL_SIZE / 2
-        } `;
+        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
       }
 
       if (right && bottom) {
         d += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + -CELL_SIZE / 2} ${
-          rowOffset + GUTTER_SIZE
-        } `;
+        d += `A ${r} ${r} 0 0 1 ${colOffset + -CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
       }
 
       if (bottom && left) {
-        d += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${
-          rowOffset + GUTTER_SIZE
-        } `;
+        d += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
         d += `A ${r} ${r} 0 0 1 ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
       }
 
       if (left && top) {
         d += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${
-          colOffset + GUTTER_SIZE + CELL_SIZE / 2
-        } ${rowOffset} `;
+        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
       }
 
       const path = createSvgElement("path", {
@@ -472,16 +428,12 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
     if (right) {
       d += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
-      d += `L ${colOffset + GUTTER_SIZE} ${
-        rowOffset + GUTTER_SIZE + CELL_SIZE / 2
-      } `;
+      d += `L ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
     }
 
     if (bottom) {
       d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
-      d += `L ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${
-        rowOffset + GUTTER_SIZE
-      } `;
+      d += `L ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
     }
 
     if (left) {
