@@ -1,6 +1,7 @@
 /**
  * TODO:
  * - separate sections into files
+ * - handle cell and gutter individual width and height
  */
 
 // =============================================================================
@@ -28,7 +29,7 @@ const SVG_SIZE = CELL_AMOUNT * CELL_SIZE + GUTTER_AMOUNT * GUTTER_SIZE;
 const SEED = "cells-and-gutters-000";
 const NOISE_STEP = 0.3;
 
-const DEBUG = false;
+const DEBUG = true;
 const DEBUG_MARGIN = CELL_SIZE + GUTTER_SIZE;
 
 // =============================================================================
