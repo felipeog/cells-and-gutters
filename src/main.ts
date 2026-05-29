@@ -2,7 +2,16 @@
  * TODO:
  * - separate sections into files
  * - separate debug from rendering
- * - handle cell and gutter individual width and height
+ * - form
+ *   - cell amount
+ *   - cell width input
+ *   - cell height input
+ *   - gutter width input
+ *   - gutter height input
+ *   - gutter dead end toggle
+ *   - seed input
+ *   - noise step input
+ *   - debug toggle
  */
 
 // =============================================================================
