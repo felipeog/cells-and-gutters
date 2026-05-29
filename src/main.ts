@@ -1,4 +1,4 @@
-import './style.css'
+import "./style.css";
 import {
   CELL_SIZE,
   CELL_RADIUS,
@@ -85,6 +85,7 @@ if (DEBUG) {
           colIndex * CELL_SIZE + colIndex * GUTTER_SIZE + CELL_SIZE;
 
         const text = createSvgElement("text", {
+          "data-type": "gutter-value",
           "data-row": String(row),
           "data-col": String(col),
           x: String(colOffset + GUTTER_SIZE / 2),
@@ -110,6 +111,7 @@ if (DEBUG) {
         const colOffset = colIndex * CELL_SIZE + colIndex * GUTTER_SIZE;
 
         const text = createSvgElement("text", {
+          "data-type": "gutter-value",
           "data-row": String(row),
           "data-col": String(col),
           x: String(colOffset + CELL_SIZE / 2),
@@ -133,6 +135,8 @@ if (DEBUG) {
 const cellStart = 0;
 const cellEnd = MATRIX_LENGTH;
 
+let cellD = "";
+
 for (let row = cellStart; row < cellEnd; row++) {
   const isRowEven = isEven(row);
 
@@ -154,7 +158,7 @@ for (let row = cellStart; row < cellEnd; row++) {
     // TODO: move debugging
     if (DEBUG) {
       const cellCircle = createSvgElement("circle", {
-        "data-type": "gutter",
+        "data-type": "cell-position",
         "data-row": String(row),
         "data-col": String(col),
         "data-top": String(top),
@@ -171,45 +175,33 @@ for (let row = cellStart; row < cellEnd; row++) {
       elements.svg.append(cellCircle);
     }
 
-    let d = "";
-
     if (!top && !right) {
-      d += `M ${colOffset + CELL_RADIUS} ${rowOffset} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_SIZE} ${rowOffset + CELL_RADIUS} `;
+      cellD += `M ${colOffset + CELL_RADIUS} ${rowOffset} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_SIZE} ${rowOffset + CELL_RADIUS} `;
     }
 
     if (!right && !bottom) {
-      d += `M ${colOffset + CELL_SIZE} ${rowOffset + CELL_RADIUS} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset + CELL_SIZE} `;
+      cellD += `M ${colOffset + CELL_SIZE} ${rowOffset + CELL_RADIUS} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset + CELL_SIZE} `;
     }
 
     if (!bottom && !left) {
-      d += `M ${colOffset + CELL_RADIUS} ${rowOffset + CELL_SIZE} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset} ${rowOffset + CELL_RADIUS} `;
+      cellD += `M ${colOffset + CELL_RADIUS} ${rowOffset + CELL_SIZE} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset} ${rowOffset + CELL_RADIUS} `;
     }
 
     if (!left && !top) {
-      d += `M ${colOffset} ${rowOffset + CELL_RADIUS} `;
-      d += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset} `;
+      cellD += `M ${colOffset} ${rowOffset + CELL_RADIUS} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset} `;
     }
-
-    const path = createSvgElement("path", {
-      "data-type": "cell",
-      "data-row": String(row),
-      "data-col": String(col),
-      stroke: "black",
-      "stroke-width": "1",
-      fill: "none",
-      d,
-    });
-
-    elements.svg.append(path);
   }
 }
 
 // TODO: move gutters rendering
 const gutterStart = cellStart - 1;
 const gutterEnd = cellEnd + 1;
+
+let gutterD = "";
 
 for (let row = gutterStart; row < gutterEnd; row++) {
   const isRowEven = isEven(row);
@@ -232,7 +224,7 @@ for (let row = gutterStart; row < gutterEnd; row++) {
     // TODO: move debugging
     if (DEBUG) {
       const gutterCircle = createSvgElement("circle", {
-        "data-type": "gutter",
+        "data-type": "gutter-position",
         "data-row": String(row),
         "data-col": String(col),
         "data-top": String(top),
@@ -253,42 +245,28 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
     if (amount < 1 || amount > 3) continue;
 
-    let d = "";
-
     if (amount === 3) {
       const r = GUTTER_SIZE / 2;
 
       if (!top) {
-        d += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
+        gutterD += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
       }
 
       if (!right) {
-        d += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
+        gutterD += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
       }
 
       if (!bottom) {
-        d += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
+        gutterD += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
       }
 
       if (!left) {
-        d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset - CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset - CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
       }
-
-      const path = createSvgElement("path", {
-        "data-type": "gutter",
-        "data-row": String(row),
-        "data-col": String(col),
-        stroke: "black",
-        "stroke-width": "1",
-        fill: "none",
-        d,
-      });
-
-      elements.svg.append(path);
 
       continue;
     }
@@ -300,70 +278,57 @@ for (let row = gutterStart; row < gutterEnd; row++) {
       const r = (CELL_SIZE + 2 * GUTTER_SIZE) / 2;
 
       if (top && right) {
-        d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
+        gutterD += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
       }
 
       if (right && bottom) {
-        d += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + -CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset + -CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
       }
 
       if (bottom && left) {
-        d += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
+        gutterD += `M ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
       }
 
       if (left && top) {
-        d += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
-        d += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
+        gutterD += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
+        gutterD += `A ${r} ${r} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
       }
-
-      const path = createSvgElement("path", {
-        "data-type": "gutter",
-        "data-row": String(row),
-        "data-col": String(col),
-        stroke: "black",
-        "stroke-width": "1",
-        fill: "none",
-        d,
-      });
-
-      elements.svg.append(path);
 
       continue;
     }
 
     if (top) {
-      d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
-      d += `L ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
+      gutterD += `M ${colOffset - CELL_SIZE / 2} ${rowOffset} `;
+      gutterD += `L ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset} `;
     }
 
     if (right) {
-      d += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
-      d += `L ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
+      gutterD += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_SIZE / 2} `;
+      gutterD += `L ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
     }
 
     if (bottom) {
-      d += `M ${colOffset - CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
-      d += `L ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+      gutterD += `M ${colOffset - CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
+      gutterD += `L ${colOffset + GUTTER_SIZE + CELL_SIZE / 2} ${rowOffset + GUTTER_SIZE} `;
     }
 
     if (left) {
-      d += `M ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
-      d += `L ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
+      gutterD += `M ${colOffset} ${rowOffset - CELL_SIZE / 2} `;
+      gutterD += `L ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_SIZE / 2} `;
     }
-
-    const path = createSvgElement("path", {
-      "data-type": "gutter",
-      "data-row": String(row),
-      "data-col": String(col),
-      stroke: "black",
-      "stroke-width": "1",
-      fill: "none",
-      d,
-    });
-
-    elements.svg.append(path);
   }
 }
+
+const d = cellD + gutterD;
+const path = createSvgElement("path", {
+  "data-type": "line",
+  stroke: "black",
+  "stroke-width": "1",
+  fill: "none",
+  d,
+});
+
+elements.svg.append(path);
