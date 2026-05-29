@@ -31,7 +31,7 @@ const DEBUG_MARGIN = CELL_SIZE + GUTTER_SIZE;
 // objects
 // =============================================================================
 
-const prng = new Alea(SEED);
+const prng = Alea(SEED);
 const noise2D = SimplexNoise.createNoise2D(prng);
 
 // =============================================================================
@@ -39,7 +39,7 @@ const noise2D = SimplexNoise.createNoise2D(prng);
 // =============================================================================
 
 const elements = {
-  svg: document.querySelector("svg"),
+  svg: document.querySelector("svg") as SVGSVGElement,
 };
 
 const x1 = DEBUG ? -1 * DEBUG_MARGIN : 0;
@@ -53,7 +53,10 @@ elements.svg.setAttribute("viewBox", `${x1} ${y1} ${x2} ${y2}`);
 // helpers
 // =============================================================================
 
-function createSvgElement(tag, properties = {}) {
+function createSvgElement(
+  tag: string,
+  properties: Record<string, string> = {},
+) {
   const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
 
   Object.entries(properties).forEach(([key, value]) =>
@@ -63,7 +66,7 @@ function createSvgElement(tag, properties = {}) {
   return element;
 }
 
-function isEven(value) {
+function isEven(value: number) {
   return value % 2 === 0;
 }
 
@@ -71,7 +74,7 @@ function isEven(value) {
 // main
 // =============================================================================
 
-let matrix = [];
+let matrix: Array<Array<boolean | null>> = [];
 let xOffset = 0;
 let yOffset = 0;
 
@@ -168,7 +171,7 @@ if (DEBUG) {
   const gridPath = createSvgElement("path", {
     "data-type": "grid",
     stroke: "rgb(0 0 0 / 0.2)",
-    "stroke-width": 1,
+    "stroke-width": "1",
     fill: "none",
     d: gridD,
   });
@@ -192,18 +195,18 @@ if (DEBUG) {
           colIndex * CELL_SIZE + colIndex * GUTTER_SIZE + CELL_SIZE;
 
         const text = createSvgElement("text", {
-          "data-row": row,
-          "data-col": col,
-          x: colOffset + GUTTER_SIZE / 2,
-          y: rowOffset + CELL_SIZE / 2,
+          "data-row": String(row),
+          "data-col": String(col),
+          x: String(colOffset + GUTTER_SIZE / 2),
+          y: String(rowOffset + CELL_SIZE / 2),
           stroke: "none",
           fill: "rgb(0 0 0 / 0.5)",
           "dominant-baseline": "middle",
           "text-anchor": "middle",
-          "font-size": 8,
+          "font-size": "8",
           "font-family": "sans-serif",
         });
-        text.textContent = Number(matrix[row][col]);
+        text.textContent = String(Number(matrix[row][col]));
 
         elements.svg.append(text);
       }
@@ -217,18 +220,18 @@ if (DEBUG) {
         const colOffset = colIndex * CELL_SIZE + colIndex * GUTTER_SIZE;
 
         const text = createSvgElement("text", {
-          "data-row": row,
-          "data-col": col,
-          x: colOffset + CELL_SIZE / 2,
-          y: rowOffset + GUTTER_SIZE / 2,
+          "data-row": String(row),
+          "data-col": String(col),
+          x: String(colOffset + CELL_SIZE / 2),
+          y: String(rowOffset + GUTTER_SIZE / 2),
           stroke: "none",
           fill: "rgb(0 0 0 / 0.5)",
           "dominant-baseline": "middle",
           "text-anchor": "middle",
-          "font-size": 8,
+          "font-size": "8",
           "font-family": "sans-serif",
         });
-        text.textContent = Number(matrix[row][col]);
+        text.textContent = String(Number(matrix[row][col]));
 
         elements.svg.append(text);
       }
@@ -261,15 +264,15 @@ for (let row = cellStart; row < cellEnd; row++) {
     if (DEBUG) {
       const cellCircle = createSvgElement("circle", {
         "data-type": "gutter",
-        "data-row": row,
-        "data-col": col,
-        "data-top": top,
-        "data-right": right,
-        "data-bottom": bottom,
-        "data-left": left,
-        cx: colOffset + CELL_SIZE / 2,
-        cy: rowOffset + CELL_SIZE / 2,
-        r: 2,
+        "data-row": String(row),
+        "data-col": String(col),
+        "data-top": String(top),
+        "data-right": String(right),
+        "data-bottom": String(bottom),
+        "data-left": String(left),
+        cx: String(colOffset + CELL_SIZE / 2),
+        cy: String(rowOffset + CELL_SIZE / 2),
+        r: "2",
         stroke: "none",
         fill: "rgb(255 0 0 / 0.2)",
       });
@@ -309,10 +312,10 @@ for (let row = cellStart; row < cellEnd; row++) {
 
     const path = createSvgElement("path", {
       "data-type": "cell",
-      "data-row": row,
-      "data-col": col,
+      "data-row": String(row),
+      "data-col": String(col),
       stroke: "black",
-      "stroke-width": 1,
+      "stroke-width": "1",
       fill: "none",
       d,
     });
@@ -349,15 +352,15 @@ for (let row = gutterStart; row < gutterEnd; row++) {
     if (DEBUG) {
       const gutterCircle = createSvgElement("circle", {
         "data-type": "gutter",
-        "data-row": row,
-        "data-col": col,
-        "data-top": top,
-        "data-right": right,
-        "data-bottom": bottom,
-        "data-left": left,
-        cx: colOffset + GUTTER_SIZE / 2,
-        cy: rowOffset + GUTTER_SIZE / 2,
-        r: 2,
+        "data-row": String(row),
+        "data-col": String(col),
+        "data-top": String(top),
+        "data-right": String(right),
+        "data-bottom": String(bottom),
+        "data-left": String(left),
+        cx: String(colOffset + GUTTER_SIZE / 2),
+        cy: String(rowOffset + GUTTER_SIZE / 2),
+        r: "2",
         stroke: "none",
         fill: "rgb(0 0 255 / 0.2)",
       });
@@ -400,10 +403,10 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
       const path = createSvgElement("path", {
         "data-type": "gutter",
-        "data-row": row,
-        "data-col": col,
+        "data-row": String(row),
+        "data-col": String(col),
         stroke: "black",
-        "stroke-width": 1,
+        "stroke-width": "1",
         fill: "none",
         d,
       });
@@ -449,10 +452,10 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
       const path = createSvgElement("path", {
         "data-type": "gutter",
-        "data-row": row,
-        "data-col": col,
+        "data-row": String(row),
+        "data-col": String(col),
         stroke: "black",
-        "stroke-width": 1,
+        "stroke-width": "1",
         fill: "none",
         d,
       });
@@ -488,10 +491,10 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
     const path = createSvgElement("path", {
       "data-type": "gutter",
-      "data-row": row,
-      "data-col": col,
+      "data-row": String(row),
+      "data-col": String(col),
       stroke: "black",
-      "stroke-width": 1,
+      "stroke-width": "1",
       fill: "none",
       d,
     });
