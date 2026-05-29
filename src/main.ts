@@ -1,3 +1,4 @@
+import './style.css'
 import {
   CELL_SIZE,
   CELL_RADIUS,
