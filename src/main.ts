@@ -1,3 +1,18 @@
+import {
+  CELL_SIZE,
+  CELL_RADIUS,
+  GUTTER_SIZE,
+  MATRIX_LENGTH,
+  SVG_SIZE,
+  SEED,
+  DEBUG,
+  NOISE_STEP,
+} from "./constants/defaultConfig";
+import { createSeededMatrix } from "./helpers/createSeededMatrix";
+import { createSvgElement } from "./helpers/createSvgElement";
+import { isEven } from "./helpers/isEven";
+import { elements } from "./render/elements";
+
 /**
  * TODO:
  * - separate sections into files
@@ -14,138 +29,14 @@
  *   - debug toggle
  */
 
-// =============================================================================
-// imports
-// =============================================================================
+const matrix = createSeededMatrix({
+  seed: SEED,
+  matrixLength: MATRIX_LENGTH,
+  noiseStep: NOISE_STEP,
+  shouldRemoveDeadEnd: true,
+});
 
-import Alea from "alea";
-import * as SimplexNoise from "simplex-noise";
-
-// =============================================================================
-// constants
-// =============================================================================
-
-const CELL_AMOUNT = 8;
-const CELL_SIZE = 32;
-const CELL_RADIUS = CELL_SIZE / 2;
-
-const GUTTER_AMOUNT = CELL_AMOUNT - 1;
-const GUTTER_SIZE = CELL_SIZE * (1 / 2);
-
-const MATRIX_LENGTH = CELL_AMOUNT + GUTTER_AMOUNT;
-
-const SVG_SIZE = CELL_AMOUNT * CELL_SIZE + GUTTER_AMOUNT * GUTTER_SIZE;
-
-const SEED = "cells-and-gutters-000";
-const NOISE_STEP = 0.3;
-
-const DEBUG = true;
-const DEBUG_MARGIN = CELL_SIZE + GUTTER_SIZE;
-
-// =============================================================================
-// objects
-// =============================================================================
-
-const prng = Alea(SEED);
-const noise2D = SimplexNoise.createNoise2D(prng);
-
-// =============================================================================
-// elements
-// =============================================================================
-
-const elements = {
-  svg: document.querySelector("svg") as SVGSVGElement,
-};
-
-const x1 = DEBUG ? -1 * DEBUG_MARGIN : 0;
-const y1 = DEBUG ? -1 * DEBUG_MARGIN : 0;
-const x2 = DEBUG ? SVG_SIZE + 2 * DEBUG_MARGIN : SVG_SIZE;
-const y2 = DEBUG ? SVG_SIZE + 2 * DEBUG_MARGIN : SVG_SIZE;
-
-elements.svg.setAttribute("viewBox", `${x1} ${y1} ${x2} ${y2}`);
-
-// =============================================================================
-// helpers
-// =============================================================================
-
-function createSvgElement(
-  tag: string,
-  properties: Record<string, string> = {},
-) {
-  const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
-
-  Object.entries(properties).forEach(([key, value]) =>
-    element.setAttribute(key, value),
-  );
-
-  return element;
-}
-
-function isEven(value: number) {
-  return value % 2 === 0;
-}
-
-// =============================================================================
-// main
-// =============================================================================
-
-let matrix: Array<Array<boolean | null>> = [];
-let xOffset = 0;
-let yOffset = 0;
-
-for (let row = 0; row < MATRIX_LENGTH; row++) {
-  const isRowEven = isEven(row);
-
-  xOffset = 0;
-
-  matrix[row] = [];
-
-  for (let col = 0; col < MATRIX_LENGTH; col++) {
-    const isColEven = isEven(col);
-    const value =
-      isRowEven === isColEven ? null : noise2D(xOffset, yOffset) > 0;
-
-    matrix[row].push(value);
-
-    xOffset += NOISE_STEP;
-  }
-
-  yOffset += NOISE_STEP;
-}
-
-let count = Infinity;
-
-while (count > 0) {
-  count = 0;
-
-  for (let row = 0; row < MATRIX_LENGTH; row++) {
-    const isRowEven = isEven(row);
-
-    for (let col = 0; col < MATRIX_LENGTH; col++) {
-      const isColEven = isEven(col);
-
-      if (isRowEven || isColEven) continue;
-
-      const top = matrix?.[row - 1]?.[col] ?? false;
-      const right = matrix?.[row]?.[col + 1] ?? false;
-      const bottom = matrix?.[row + 1]?.[col] ?? false;
-      const left = matrix?.[row]?.[col - 1] ?? false;
-
-      const amount =
-        Number(top) + Number(right) + Number(bottom) + Number(left);
-
-      if (amount !== 3) continue;
-
-      count++;
-
-      matrix[row - 1][col] = true;
-      matrix[row][col + 1] = true;
-      matrix[row + 1][col] = true;
-      matrix[row][col - 1] = true;
-    }
-  }
-}
-
+// TODO: move debugging
 if (DEBUG) {
   let gridD = "";
 
@@ -176,6 +67,7 @@ if (DEBUG) {
   elements.svg.append(gridPath);
 }
 
+// TODO: move debugging
 if (DEBUG) {
   for (let row = 0; row < MATRIX_LENGTH; row++) {
     const isRowEven = isEven(row);
@@ -236,6 +128,7 @@ if (DEBUG) {
   }
 }
 
+// TODO: move cells rendering
 const cellStart = 0;
 const cellEnd = MATRIX_LENGTH;
 
@@ -257,6 +150,7 @@ for (let row = cellStart; row < cellEnd; row++) {
     const rowOffset = rowIndex * CELL_SIZE + rowIndex * GUTTER_SIZE;
     const colOffset = colIndex * CELL_SIZE + colIndex * GUTTER_SIZE;
 
+    // TODO: move debugging
     if (DEBUG) {
       const cellCircle = createSvgElement("circle", {
         "data-type": "gutter",
@@ -312,6 +206,7 @@ for (let row = cellStart; row < cellEnd; row++) {
   }
 }
 
+// TODO: move gutters rendering
 const gutterStart = cellStart - 1;
 const gutterEnd = cellEnd + 1;
 
@@ -333,6 +228,7 @@ for (let row = gutterStart; row < gutterEnd; row++) {
     const rowOffset = rowIndex * CELL_SIZE + (rowIndex - 1) * GUTTER_SIZE;
     const colOffset = colIndex * CELL_SIZE + (colIndex - 1) * GUTTER_SIZE;
 
+    // TODO: move debugging
     if (DEBUG) {
       const gutterCircle = createSvgElement("circle", {
         "data-type": "gutter",

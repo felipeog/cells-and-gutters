@@ -1,0 +1,11 @@
+export const CELL_AMOUNT = 8;
+export const CELL_SIZE = 32;
+export const CELL_RADIUS = CELL_SIZE / 2;
+export const GUTTER_AMOUNT = CELL_AMOUNT - 1;
+export const GUTTER_SIZE = CELL_SIZE * (1 / 2);
+export const MATRIX_LENGTH = CELL_AMOUNT + GUTTER_AMOUNT;
+export const SVG_SIZE = CELL_AMOUNT * CELL_SIZE + GUTTER_AMOUNT * GUTTER_SIZE;
+export const SEED = "cells-and-gutters-000";
+export const NOISE_STEP = 0.3;
+export const DEBUG = true;
+export const DEBUG_MARGIN = CELL_SIZE + GUTTER_SIZE;
