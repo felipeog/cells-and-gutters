@@ -139,19 +139,19 @@ while (count > 0) {
 if (DEBUG) {
   let gridD = "";
 
-  for (let i = 0; i <= MATRIX_LENGTH + 1; i++) {
+  for (let i = 0; i < MATRIX_LENGTH + 3; i++) {
     if (isEven(i)) {
       const index = i / 2;
       const offset = index * CELL_SIZE + index * GUTTER_SIZE;
 
-      gridD += `M ${0} ${offset} L ${SVG_SIZE} ${offset} `;
-      gridD += `M ${offset} ${0} L ${offset} ${SVG_SIZE} `;
+      gridD += `M ${0 - GUTTER_SIZE} ${offset} L ${SVG_SIZE + GUTTER_SIZE} ${offset} `;
+      gridD += `M ${offset} ${0 - GUTTER_SIZE} L ${offset} ${SVG_SIZE + GUTTER_SIZE} `;
     } else {
       const index = Math.floor(i / 2);
       const offset = index * CELL_SIZE + (index - 1) * GUTTER_SIZE;
 
-      gridD += `M ${0} ${offset} L ${SVG_SIZE} ${offset} `;
-      gridD += `M ${offset} ${0} L ${offset} ${SVG_SIZE} `;
+      gridD += `M ${0 - GUTTER_SIZE} ${offset} L ${SVG_SIZE + GUTTER_SIZE} ${offset} `;
+      gridD += `M ${offset} ${0 - GUTTER_SIZE} L ${offset} ${SVG_SIZE + GUTTER_SIZE} `;
     }
   }
 
@@ -318,10 +318,6 @@ for (let row = gutterStart; row < gutterEnd; row++) {
     const bottom = matrix?.[row + 1]?.[col] ?? false;
     const left = matrix?.[row]?.[col - 1] ?? false;
 
-    const amount = Number(top) + Number(right) + Number(bottom) + Number(left);
-
-    if (amount < 1 || amount > 3) continue;
-
     const rowIndex = Math.ceil(row / 2);
     const colIndex = Math.ceil(col / 2);
     const rowOffset = rowIndex * CELL_SIZE + (rowIndex - 1) * GUTTER_SIZE;
@@ -345,6 +341,10 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
       elements.svg.append(gutterCircle);
     }
+
+    const amount = Number(top) + Number(right) + Number(bottom) + Number(left);
+
+    if (amount < 1 || amount > 3) continue;
 
     let d = "";
 
