@@ -1,6 +1,7 @@
 /**
  * TODO:
  * - separate sections into files
+ * - separate debug from rendering
  * - handle cell and gutter individual width and height
  */
 
