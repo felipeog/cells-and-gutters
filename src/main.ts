@@ -4,6 +4,8 @@ import {
   CELL_HEIGHT,
   CELL_RADIUS,
   GUTTER_SIZE,
+  MARGIN_X_SIZE,
+  MARGIN_Y_SIZE,
   MATRIX_LENGTH,
   SVG_WIDTH,
   SVG_HEIGHT,
@@ -46,18 +48,18 @@ if (DEBUG) {
   for (let i = 0; i < MATRIX_LENGTH + 3; i++) {
     if (isEven(i)) {
       const index = i / 2;
-      const yOffset = index * CELL_HEIGHT + index * GUTTER_SIZE;
-      const xOffset = index * CELL_WIDTH + index * GUTTER_SIZE;
+      const yOffset = MARGIN_Y_SIZE + index * CELL_HEIGHT + index * GUTTER_SIZE;
+      const xOffset = MARGIN_X_SIZE + index * CELL_WIDTH + index * GUTTER_SIZE;
 
-      gridD += `M ${0 - GUTTER_SIZE} ${yOffset} L ${SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
-      gridD += `M ${xOffset} ${0 - GUTTER_SIZE} L ${xOffset} ${SVG_HEIGHT + GUTTER_SIZE} `;
+      gridD += `M ${MARGIN_X_SIZE - GUTTER_SIZE} ${yOffset} L ${MARGIN_X_SIZE + SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
+      gridD += `M ${xOffset} ${MARGIN_Y_SIZE - GUTTER_SIZE} L ${xOffset} ${MARGIN_Y_SIZE + SVG_HEIGHT + GUTTER_SIZE} `;
     } else {
       const index = Math.floor(i / 2);
-      const yOffset = index * CELL_HEIGHT + (index - 1) * GUTTER_SIZE;
-      const xOffset = index * CELL_WIDTH + (index - 1) * GUTTER_SIZE;
+      const yOffset = MARGIN_Y_SIZE + index * CELL_HEIGHT + (index - 1) * GUTTER_SIZE;
+      const xOffset = MARGIN_X_SIZE + index * CELL_WIDTH + (index - 1) * GUTTER_SIZE;
 
-      gridD += `M ${0 - GUTTER_SIZE} ${yOffset} L ${SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
-      gridD += `M ${xOffset} ${0 - GUTTER_SIZE} L ${xOffset} ${SVG_HEIGHT + GUTTER_SIZE} `;
+      gridD += `M ${MARGIN_X_SIZE - GUTTER_SIZE} ${yOffset} L ${MARGIN_X_SIZE + SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
+      gridD += `M ${xOffset} ${MARGIN_Y_SIZE - GUTTER_SIZE} L ${xOffset} ${MARGIN_Y_SIZE + SVG_HEIGHT + GUTTER_SIZE} `;
     }
   }
 
@@ -84,9 +86,9 @@ if (DEBUG) {
         const rowIndex = row / 2;
         const colIndex = Math.floor(col / 2);
 
-        const rowOffset = rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
+        const rowOffset = MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
         const colOffset =
-          colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE + CELL_WIDTH;
+          MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE + CELL_WIDTH;
 
         const text = createSvgElement("text", {
           "data-type": "gutter-value",
@@ -111,8 +113,8 @@ if (DEBUG) {
         const colIndex = col / 2;
 
         const rowOffset =
-          rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE + CELL_HEIGHT;
-        const colOffset = colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
+          MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE + CELL_HEIGHT;
+        const colOffset = MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
 
         const text = createSvgElement("text", {
           "data-type": "gutter-value",
@@ -156,8 +158,8 @@ for (let row = cellStart; row < cellEnd; row++) {
 
     const rowIndex = row / 2;
     const colIndex = col / 2;
-    const rowOffset = rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
-    const colOffset = colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
+    const rowOffset = MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
+    const colOffset = MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
 
     // TODO: move debugging
     if (DEBUG) {
@@ -230,8 +232,8 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
     const rowIndex = Math.ceil(row / 2);
     const colIndex = Math.ceil(col / 2);
-    const rowOffset = rowIndex * CELL_HEIGHT + (rowIndex - 1) * GUTTER_SIZE;
-    const colOffset = colIndex * CELL_WIDTH + (colIndex - 1) * GUTTER_SIZE;
+    const rowOffset = MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + (rowIndex - 1) * GUTTER_SIZE;
+    const colOffset = MARGIN_X_SIZE + colIndex * CELL_WIDTH + (colIndex - 1) * GUTTER_SIZE;
 
     // TODO: move debugging
     if (DEBUG) {
