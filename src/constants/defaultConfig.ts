@@ -36,3 +36,4 @@ export const SVG_HEIGHT = CONTENT_HEIGHT;
 export const SEED = "cells-and-gutters-000";
 export const NOISE_STEP = 0.3;
 export const DEBUG = false;
+export const OPTIMIZE = true;
