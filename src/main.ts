@@ -6,7 +6,8 @@ import {
   GUTTER_SIZE,
   MARGIN_X_SIZE,
   MARGIN_Y_SIZE,
-  MATRIX_LENGTH,
+  MATRIX_LENGTH_X,
+  MATRIX_LENGTH_Y,
   SVG_WIDTH,
   SVG_HEIGHT,
   SEED,
@@ -36,7 +37,8 @@ import { elements } from "./render/elements";
 
 const matrix = createSeededMatrix({
   seed: SEED,
-  matrixLength: MATRIX_LENGTH,
+  matrixLengthX: MATRIX_LENGTH_X,
+  matrixLengthY: MATRIX_LENGTH_Y,
   noiseStep: NOISE_STEP,
   shouldRemoveDeadEnd: false,
 });
@@ -45,22 +47,22 @@ const matrix = createSeededMatrix({
 if (DEBUG) {
   let gridD = "";
 
-  for (let i = 0; i < MATRIX_LENGTH + 3; i++) {
-    if (isEven(i)) {
-      const index = i / 2;
-      const yOffset = MARGIN_Y_SIZE + index * CELL_HEIGHT + index * GUTTER_SIZE;
-      const xOffset = MARGIN_X_SIZE + index * CELL_WIDTH + index * GUTTER_SIZE;
+  for (let i = 0; i < MATRIX_LENGTH_Y + 3; i++) {
+    const index = isEven(i) ? i / 2 : Math.floor(i / 2);
+    const yOffset = isEven(i)
+      ? MARGIN_Y_SIZE + index * CELL_HEIGHT + index * GUTTER_SIZE
+      : MARGIN_Y_SIZE + index * CELL_HEIGHT + (index - 1) * GUTTER_SIZE;
 
-      gridD += `M ${MARGIN_X_SIZE - GUTTER_SIZE} ${yOffset} L ${MARGIN_X_SIZE + SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
-      gridD += `M ${xOffset} ${MARGIN_Y_SIZE - GUTTER_SIZE} L ${xOffset} ${MARGIN_Y_SIZE + SVG_HEIGHT + GUTTER_SIZE} `;
-    } else {
-      const index = Math.floor(i / 2);
-      const yOffset = MARGIN_Y_SIZE + index * CELL_HEIGHT + (index - 1) * GUTTER_SIZE;
-      const xOffset = MARGIN_X_SIZE + index * CELL_WIDTH + (index - 1) * GUTTER_SIZE;
+    gridD += `M ${MARGIN_X_SIZE - GUTTER_SIZE} ${yOffset} L ${MARGIN_X_SIZE + SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
+  }
 
-      gridD += `M ${MARGIN_X_SIZE - GUTTER_SIZE} ${yOffset} L ${MARGIN_X_SIZE + SVG_WIDTH + GUTTER_SIZE} ${yOffset} `;
-      gridD += `M ${xOffset} ${MARGIN_Y_SIZE - GUTTER_SIZE} L ${xOffset} ${MARGIN_Y_SIZE + SVG_HEIGHT + GUTTER_SIZE} `;
-    }
+  for (let i = 0; i < MATRIX_LENGTH_X + 3; i++) {
+    const index = isEven(i) ? i / 2 : Math.floor(i / 2);
+    const xOffset = isEven(i)
+      ? MARGIN_X_SIZE + index * CELL_WIDTH + index * GUTTER_SIZE
+      : MARGIN_X_SIZE + index * CELL_WIDTH + (index - 1) * GUTTER_SIZE;
+
+    gridD += `M ${xOffset} ${MARGIN_Y_SIZE - GUTTER_SIZE} L ${xOffset} ${MARGIN_Y_SIZE + SVG_HEIGHT + GUTTER_SIZE} `;
   }
 
   const gridPath = createSvgElement("path", {
@@ -76,19 +78,23 @@ if (DEBUG) {
 
 // TODO: move debugging
 if (DEBUG) {
-  for (let row = 0; row < MATRIX_LENGTH; row++) {
+  for (let row = 0; row < MATRIX_LENGTH_Y; row++) {
     const isRowEven = isEven(row);
 
-    for (let col = 0; col < MATRIX_LENGTH; col++) {
+    for (let col = 0; col < MATRIX_LENGTH_X; col++) {
       const isColEven = isEven(col);
 
       if (isRowEven && !isColEven) {
         const rowIndex = row / 2;
         const colIndex = Math.floor(col / 2);
 
-        const rowOffset = MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
+        const rowOffset =
+          MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
         const colOffset =
-          MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE + CELL_WIDTH;
+          MARGIN_X_SIZE +
+          colIndex * CELL_WIDTH +
+          colIndex * GUTTER_SIZE +
+          CELL_WIDTH;
 
         const text = createSvgElement("text", {
           "data-type": "gutter-value",
@@ -113,8 +119,12 @@ if (DEBUG) {
         const colIndex = col / 2;
 
         const rowOffset =
-          MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE + CELL_HEIGHT;
-        const colOffset = MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
+          MARGIN_Y_SIZE +
+          rowIndex * CELL_HEIGHT +
+          rowIndex * GUTTER_SIZE +
+          CELL_HEIGHT;
+        const colOffset =
+          MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
 
         const text = createSvgElement("text", {
           "data-type": "gutter-value",
@@ -139,14 +149,15 @@ if (DEBUG) {
 
 // TODO: move cells rendering
 const cellStart = 0;
-const cellEnd = MATRIX_LENGTH;
+const cellEndY = MATRIX_LENGTH_Y;
+const cellEndX = MATRIX_LENGTH_X;
 
 let cellD = "";
 
-for (let row = cellStart; row < cellEnd; row++) {
+for (let row = cellStart; row < cellEndY; row++) {
   const isRowEven = isEven(row);
 
-  for (let col = cellStart; col < cellEnd; col++) {
+  for (let col = cellStart; col < cellEndX; col++) {
     const isColEven = isEven(col);
 
     if (!isRowEven || !isColEven) continue;
@@ -158,8 +169,10 @@ for (let row = cellStart; row < cellEnd; row++) {
 
     const rowIndex = row / 2;
     const colIndex = col / 2;
-    const rowOffset = MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
-    const colOffset = MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
+    const rowOffset =
+      MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + rowIndex * GUTTER_SIZE;
+    const colOffset =
+      MARGIN_X_SIZE + colIndex * CELL_WIDTH + colIndex * GUTTER_SIZE;
 
     // TODO: move debugging
     if (DEBUG) {
@@ -213,14 +226,15 @@ for (let row = cellStart; row < cellEnd; row++) {
 
 // TODO: move gutters rendering
 const gutterStart = cellStart - 1;
-const gutterEnd = cellEnd + 1;
+const gutterEndY = cellEndY + 1;
+const gutterEndX = cellEndX + 1;
 
 let gutterD = "";
 
-for (let row = gutterStart; row < gutterEnd; row++) {
+for (let row = gutterStart; row < gutterEndY; row++) {
   const isRowEven = isEven(row);
 
-  for (let col = gutterStart; col < gutterEnd; col++) {
+  for (let col = gutterStart; col < gutterEndX; col++) {
     const isColEven = isEven(col);
 
     if (isRowEven || isColEven) continue;
@@ -232,8 +246,10 @@ for (let row = gutterStart; row < gutterEnd; row++) {
 
     const rowIndex = Math.ceil(row / 2);
     const colIndex = Math.ceil(col / 2);
-    const rowOffset = MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + (rowIndex - 1) * GUTTER_SIZE;
-    const colOffset = MARGIN_X_SIZE + colIndex * CELL_WIDTH + (colIndex - 1) * GUTTER_SIZE;
+    const rowOffset =
+      MARGIN_Y_SIZE + rowIndex * CELL_HEIGHT + (rowIndex - 1) * GUTTER_SIZE;
+    const colOffset =
+      MARGIN_X_SIZE + colIndex * CELL_WIDTH + (colIndex - 1) * GUTTER_SIZE;
 
     // TODO: move debugging
     if (DEBUG) {

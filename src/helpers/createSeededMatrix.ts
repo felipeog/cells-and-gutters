@@ -3,14 +3,16 @@ import { isEven } from "./isEven";
 
 type Args = {
   seed: string;
-  matrixLength: number;
+  matrixLengthX: number;
+  matrixLengthY: number;
   noiseStep: number;
   shouldRemoveDeadEnd: boolean;
 };
 
 export function createSeededMatrix({
   seed,
-  matrixLength,
+  matrixLengthX,
+  matrixLengthY,
   noiseStep,
   shouldRemoveDeadEnd,
 }: Args) {
@@ -20,13 +22,13 @@ export function createSeededMatrix({
   let xOffset = 0;
   let yOffset = 0;
 
-  for (let row = 0; row < matrixLength; row++) {
+  for (let row = 0; row < matrixLengthY; row++) {
     const isRowEven = isEven(row);
 
     xOffset = 0;
     matrix[row] = [];
 
-    for (let col = 0; col < matrixLength; col++) {
+    for (let col = 0; col < matrixLengthX; col++) {
       const isColEven = isEven(col);
       const value =
         isRowEven === isColEven ? null : noise(xOffset, yOffset) > 0;
@@ -53,7 +55,7 @@ function removeDeadEnd(matrix: Matrix) {
     for (let row = 0; row < matrix.length; row++) {
       const isRowEven = isEven(row);
 
-      for (let col = 0; col < matrix.length; col++) {
+      for (let col = 0; col < matrix[row].length; col++) {
         const isColEven = isEven(col);
 
         if (isRowEven || isColEven) continue;
