@@ -2,8 +2,7 @@ import "./style.css";
 import {
   CELL_WIDTH,
   CELL_HEIGHT,
-  CELL_RADIUS_X,
-  CELL_RADIUS_Y,
+  CELL_RADIUS,
   GUTTER_SIZE,
   MATRIX_LENGTH,
   SVG_WIDTH,
@@ -37,7 +36,7 @@ const matrix = createSeededMatrix({
   seed: SEED,
   matrixLength: MATRIX_LENGTH,
   noiseStep: NOISE_STEP,
-  shouldRemoveDeadEnd: true,
+  shouldRemoveDeadEnd: false,
 });
 
 // TODO: move debugging
@@ -181,23 +180,31 @@ for (let row = cellStart; row < cellEnd; row++) {
     }
 
     if (!top && !right) {
-      cellD += `M ${colOffset + CELL_RADIUS_X} ${rowOffset} `;
-      cellD += `A ${CELL_RADIUS_X} ${CELL_RADIUS_Y} 0 0 1 ${colOffset + CELL_WIDTH} ${rowOffset + CELL_RADIUS_Y} `;
+      cellD += `M ${colOffset + CELL_WIDTH / 2} ${rowOffset} `;
+      cellD += `L ${colOffset + CELL_WIDTH - CELL_RADIUS} ${rowOffset} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_WIDTH} ${rowOffset + CELL_RADIUS} `;
+      cellD += `L ${colOffset + CELL_WIDTH} ${rowOffset + CELL_HEIGHT / 2} `;
     }
 
     if (!right && !bottom) {
-      cellD += `M ${colOffset + CELL_WIDTH} ${rowOffset + CELL_RADIUS_Y} `;
-      cellD += `A ${CELL_RADIUS_X} ${CELL_RADIUS_Y} 0 0 1 ${colOffset + CELL_RADIUS_X} ${rowOffset + CELL_HEIGHT} `;
+      cellD += `M ${colOffset + CELL_WIDTH} ${rowOffset + CELL_HEIGHT / 2} `;
+      cellD += `L ${colOffset + CELL_WIDTH} ${rowOffset + CELL_HEIGHT - CELL_RADIUS} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_WIDTH - CELL_RADIUS} ${rowOffset + CELL_HEIGHT} `;
+      cellD += `L ${colOffset + CELL_WIDTH / 2} ${rowOffset + CELL_HEIGHT} `;
     }
 
     if (!bottom && !left) {
-      cellD += `M ${colOffset + CELL_RADIUS_X} ${rowOffset + CELL_HEIGHT} `;
-      cellD += `A ${CELL_RADIUS_X} ${CELL_RADIUS_Y} 0 0 1 ${colOffset} ${rowOffset + CELL_RADIUS_Y} `;
+      cellD += `M ${colOffset + CELL_WIDTH / 2} ${rowOffset + CELL_HEIGHT} `;
+      cellD += `L ${colOffset + CELL_RADIUS} ${rowOffset + CELL_HEIGHT} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset} ${rowOffset + CELL_HEIGHT - CELL_RADIUS} `;
+      cellD += `L ${colOffset} ${rowOffset + CELL_HEIGHT / 2} `;
     }
 
     if (!left && !top) {
-      cellD += `M ${colOffset} ${rowOffset + CELL_RADIUS_Y} `;
-      cellD += `A ${CELL_RADIUS_X} ${CELL_RADIUS_Y} 0 0 1 ${colOffset + CELL_RADIUS_X} ${rowOffset} `;
+      cellD += `M ${colOffset} ${rowOffset + CELL_HEIGHT / 2} `;
+      cellD += `L ${colOffset} ${rowOffset + CELL_RADIUS} `;
+      cellD += `A ${CELL_RADIUS} ${CELL_RADIUS} 0 0 1 ${colOffset + CELL_RADIUS} ${rowOffset} `;
+      cellD += `L ${colOffset + CELL_WIDTH / 2} ${rowOffset} `;
     }
   }
 }
@@ -280,27 +287,34 @@ for (let row = gutterStart; row < gutterEnd; row++) {
       (top && right) || (right && bottom) || (bottom && left) || (left && top);
 
     if (amount === 2 && isCurve) {
-      const rx = (CELL_WIDTH + 2 * GUTTER_SIZE) / 2;
-      const ry = (CELL_HEIGHT + 2 * GUTTER_SIZE) / 2;
+      const ro = CELL_RADIUS + GUTTER_SIZE;
 
       if (top && right) {
         gutterD += `M ${colOffset - CELL_WIDTH / 2} ${rowOffset} `;
-        gutterD += `A ${rx} ${ry} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_HEIGHT / 2} `;
+        gutterD += `L ${colOffset - CELL_RADIUS} ${rowOffset} `;
+        gutterD += `A ${ro} ${ro} 0 0 1 ${colOffset + GUTTER_SIZE} ${rowOffset + CELL_RADIUS + GUTTER_SIZE} `;
+        gutterD += `L ${colOffset + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE + CELL_HEIGHT / 2} `;
       }
 
       if (right && bottom) {
         gutterD += `M ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_HEIGHT / 2} `;
-        gutterD += `A ${rx} ${ry} 0 0 1 ${colOffset - CELL_WIDTH / 2} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `L ${colOffset + GUTTER_SIZE} ${rowOffset - CELL_RADIUS} `;
+        gutterD += `A ${ro} ${ro} 0 0 1 ${colOffset - CELL_RADIUS} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `L ${colOffset - CELL_WIDTH / 2} ${rowOffset + GUTTER_SIZE} `;
       }
 
       if (bottom && left) {
         gutterD += `M ${colOffset + GUTTER_SIZE + CELL_WIDTH / 2} ${rowOffset + GUTTER_SIZE} `;
-        gutterD += `A ${rx} ${ry} 0 0 1 ${colOffset} ${rowOffset - CELL_HEIGHT / 2} `;
+        gutterD += `L ${colOffset + CELL_RADIUS + GUTTER_SIZE} ${rowOffset + GUTTER_SIZE} `;
+        gutterD += `A ${ro} ${ro} 0 0 1 ${colOffset} ${rowOffset - CELL_RADIUS} `;
+        gutterD += `L ${colOffset} ${rowOffset - CELL_HEIGHT / 2} `;
       }
 
       if (left && top) {
         gutterD += `M ${colOffset} ${rowOffset + GUTTER_SIZE + CELL_HEIGHT / 2} `;
-        gutterD += `A ${rx} ${ry} 0 0 1 ${colOffset + GUTTER_SIZE + CELL_WIDTH / 2} ${rowOffset} `;
+        gutterD += `L ${colOffset} ${rowOffset + CELL_RADIUS + GUTTER_SIZE} `;
+        gutterD += `A ${ro} ${ro} 0 0 1 ${colOffset + CELL_RADIUS + GUTTER_SIZE} ${rowOffset} `;
+        gutterD += `L ${colOffset + GUTTER_SIZE + CELL_WIDTH / 2} ${rowOffset} `;
       }
 
       continue;
