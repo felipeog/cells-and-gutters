@@ -1,23 +1,25 @@
 import "./style.css";
 import {
-  CELL_WIDTH,
   CELL_HEIGHT,
   CELL_RADIUS,
+  CELL_WIDTH,
+  DEBUG,
   GUTTER_SIZE,
   MARGIN_X_SIZE,
   MARGIN_Y_SIZE,
   MATRIX_LENGTH_X,
   MATRIX_LENGTH_Y,
-  SVG_WIDTH,
-  SVG_HEIGHT,
-  SEED,
-  DEBUG,
   NOISE_STEP,
+  OPTIMIZE,
+  SEED,
+  SVG_HEIGHT,
+  SVG_WIDTH,
 } from "./constants/defaultConfig";
 import { createSeededMatrix } from "./helpers/createSeededMatrix";
 import { createSvgElement } from "./helpers/createSvgElement";
 import { isEven } from "./helpers/isEven";
 import { elements } from "./render/elements";
+import { optimizePath } from "./helpers/optimizePath";
 import { roundCoords } from "./helpers/roundCoords";
 
 /**
@@ -361,7 +363,10 @@ for (let row = gutterStart; row < gutterEndY; row++) {
   }
 }
 
-const d = roundCoords(cellD + gutterD);
+let d = roundCoords(cellD + gutterD);
+
+if (OPTIMIZE) d = optimizePath(d);
+
 const path = createSvgElement("path", {
   "data-type": "line",
   stroke: "black",
