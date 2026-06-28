@@ -18,6 +18,7 @@ import { createSeededMatrix } from "./helpers/createSeededMatrix";
 import { createSvgElement } from "./helpers/createSvgElement";
 import { isEven } from "./helpers/isEven";
 import { elements } from "./render/elements";
+import { roundCoords } from "./helpers/roundCoords";
 
 /**
  * TODO:
@@ -70,7 +71,7 @@ if (DEBUG) {
     stroke: "rgb(0 0 0 / 0.2)",
     "stroke-width": "1",
     fill: "none",
-    d: gridD,
+    d: roundCoords(gridD),
   });
 
   elements.svg.append(gridPath);
@@ -360,7 +361,7 @@ for (let row = gutterStart; row < gutterEndY; row++) {
   }
 }
 
-const d = cellD + gutterD;
+const d = roundCoords(cellD + gutterD);
 const path = createSvgElement("path", {
   "data-type": "line",
   stroke: "black",
